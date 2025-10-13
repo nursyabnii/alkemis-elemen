@@ -13,6 +13,7 @@
         <h1>🧪 Alkemis Elemen 🧪</h1>
         <div class="info-bar">
             <p>Elemen Ditemukan: <span id="element-count">0</span> / <span id="total-elements">0</span></p>
+            <button id="show-instructions-button">Cara Bermain 📜</button>
             <button id="reset-button">Bersihkan Meja</button>
             <button id="reset-progress-button" title="Hapus semua progres dan mulai dari awal">Mulai Ulang Game</button>
         </div>
@@ -25,6 +26,21 @@
         <div id="element-panel">
         </div>
     </main>
+    <div id="modal-overlay">
+        <div id="modal-content">
+            <h2>📜 Cara Bermain 📜</h2>
+            <p>Selamat datang, Alkemis! Misi Anda adalah menemukan semua elemen yang ada.</p>
+            <ol>
+                <li><strong>Pilih Elemen:</strong> Seret (atau sentuh & geser) sebuah elemen dari panel koleksi ke meja
+                    kerja.</li>
+                <li><strong>Gabungkan:</strong> Timpa elemen di meja kerja dengan elemen lain dari panel koleksi.</li>
+                <li><strong>Temukan:</strong> Jika kombinasi berhasil, elemen baru akan tercipta dan ditambahkan ke
+                    koleksimu!</li>
+            </ol>
+            <p>Teruslah bereksperimen untuk menemukan semua rahasia alam semesta!</p>
+            <button id="close-modal-button">Saya Mengerti, Mulai Bermain!</button>
+        </div>
+    </div>
 
     <div id="notification" class="hidden">
         <p>🎉 Elemen Baru Ditemukan! 🎉</p>

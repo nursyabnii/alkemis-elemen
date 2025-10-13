@@ -219,6 +219,75 @@ button:hover {
     /* Efek visual saat di-drag */
 }
 
+/* --- Styling untuk Modal Instruksi --- */
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(46, 30, 21, 0.8);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    /* Mencegah interaksi saat modal tersembunyi */
+}
+
+#modal-content {
+    background-color: #f0e8d9;
+    color: #4a2e1d;
+    padding: 2rem;
+    border-radius: 15px;
+    border: 3px solid #b49b73;
+    max-width: 500px;
+    width: 100%;
+    text-align: left;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+#modal-content h2 {
+    text-align: center;
+    font-family: 'Cinzel Decorative', cursive;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+#modal-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+#modal-content ol {
+    margin-left: 20px;
+    margin-bottom: 1.5rem;
+}
+
+#modal-content li {
+    margin-bottom: 0.75rem;
+}
+
+#close-modal-button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    background-color: #8c6d46;
+    border-color: #5c3d2e;
+}
+
+#close-modal-button:hover {
+    background-color: #5c3d2e;
+}
+
 /* --- Media Query untuk layar lebih besar (Desktop) --- */
 @media (min-width: 768px) {
     h1 {

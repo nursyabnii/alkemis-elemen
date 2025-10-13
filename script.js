@@ -125,6 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetProgressButton = document.getElementById('reset-progress-button');
     const notification = document.getElementById('notification');
 
+    const modalOverlay = document.getElementById('modal-overlay');
+    const closeModalButton = document.getElementById('close-modal-button');
+    const showInstructionsButton = document.getElementById('show-instructions-button');
+
+
     let discoveredElements = new Set(['air', 'api', 'tanah', 'udara']);
     let workspaceElements = new Map();
     let uniqueIdCounter = 0;
@@ -370,7 +375,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // BARU: Fungsi untuk mengelola modal instruksi
+    function handleInstructions() {
+        // Cek apakah instruksi sudah pernah dilihat
+        if (localStorage.getItem('alkemisInstructionsSeen') === 'true') {
+            modalOverlay.classList.add('hidden');
+        }
+
+        // Tambahkan event listener ke tombol tutup
+        closeModalButton.addEventListener('click', () => {
+            modalOverlay.classList.add('hidden');
+            // Tandai bahwa instruksi sudah dilihat
+            localStorage.setItem('alkemisInstructionsSeen', 'true');
+        });
+    }
+
+    // BARU: Event listener untuk tombol "Cara Bermain"
+    showInstructionsButton.addEventListener('click', () => {
+        modalOverlay.classList.remove('hidden');
+    });
 
     // --- INISIALISASI GAME ---
+    handleInstructions();
     loadProgress();
 });
