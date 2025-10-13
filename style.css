@@ -272,6 +272,46 @@ button:hover {
     background-color: #5c3d2e;
 }
 
+#hint-button {
+    background-color: #3a8a44;
+    border-color: #2a6431;
+}
+
+#hint-button:hover {
+    background-color: #2a6431;
+}
+
+/* --- Styling untuk Tampilan Hint --- */
+#hint-display {
+    text-align: center;
+    padding: 10px;
+    background-color: #fffbe2;
+    color: #5c3d2e;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-bottom: 2px solid #d8c4a9;
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
+    max-height: 100px;
+    /* Atur tinggi maks agar transisi mulus */
+}
+
+#hint-display.hidden {
+    opacity: 0;
+    padding: 0;
+    max-height: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+#hint-count {
+    display: inline-block;
+    min-width: 10px;
+    /* Jaga agar lebar tidak berubah drastis */
+    font-weight: bold;
+}
+
+
 @media (min-width: 768px) {
     h1 {
         font-size: 2.5rem;

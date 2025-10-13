@@ -14,11 +14,13 @@
         <div class="info-bar">
             <p>Elemen Ditemukan: <span id="element-count">0</span> / <span id="total-elements">0</span></p>
             <button id="show-instructions-button">Cara Bermain 📜</button>
+            <button id="hint-button">Petunjuk 💡 (<span id="hint-count">3</span>)</button>
             <button id="reset-button">Bersihkan Meja</button>
             <button id="reset-progress-button" title="Hapus semua progres dan mulai dari awal">Mulai Ulang Game</button>
         </div>
     </header>
 
+    <div id="hint-display" class="hidden"></div>
     <main class="game-container">
         <div id="workspace">
             <p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>

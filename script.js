@@ -129,10 +129,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalButton = document.getElementById('close-modal-button');
     const showInstructionsButton = document.getElementById('show-instructions-button');
 
+    // BARU: Variabel untuk fitur hint
+    const hintButton = document.getElementById('hint-button');
+    const hintDisplay = document.getElementById('hint-display');
+    const hintCountSpan = document.getElementById('hint-count');
 
     let discoveredElements = new Set(['air', 'api', 'tanah', 'udara']);
     let workspaceElements = new Map();
     let uniqueIdCounter = 0;
+
+    // BARU: Variabel untuk hint counter
+    let hintCount = 3;
+    let hintedResult = null;
 
     // --- TAMBAHAN: Variabel untuk state touch drag ---
     let touchDragState = {
@@ -144,9 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNGSI-FUNGSI UTAMA ---
 
+
     // Fungsi untuk menyimpan progres ke localStorage
     function saveProgress() {
         localStorage.setItem('discoveredElements', JSON.stringify(Array.from(discoveredElements)));
+        localStorage.setItem('alkemisHintCount', hintCount); // Simpan hint
     }
 
     // Fungsi untuk memuat progres dari localStorage
@@ -155,8 +165,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedData) {
             discoveredElements = new Set(JSON.parse(savedData));
         }
+
+        // Muat hint, atau set ke default 3 jika tidak ada
+        const savedHints = localStorage.getItem('alkemisHintCount');
+        hintCount = savedHints ? parseInt(savedHints, 10) : 3;
+        updateHintDisplay();
+
         updateElementPanel();
         updateCounter();
+    }
+
+    function updateHintDisplay() {
+        hintCountSpan.textContent = hintCount;
     }
 
     // Membuat elemen visual (DOM)
@@ -217,53 +237,42 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- PERUBAHAN BESAR ---
     // Fungsi ini sekarang menangani semua logika drop
     function performDrop(droppedType, droppedInstanceId, targetElement, dropX, dropY) {
-        const placeholder = workspace.querySelector('.workspace-placeholder');
-        if (placeholder) placeholder.style.display = 'none';
-
-        // Jika target adalah elemen lain di workspace
+        const placeholder = workspace.querySelector('.workspace-placeholder'); if (placeholder) placeholder.style.display = 'none';
         if (targetElement && targetElement.classList.contains('element-in-workspace')) {
-            const targetInstanceId = targetElement.id;
-            // Pastikan tidak drop ke diri sendiri
-            if (targetInstanceId === droppedInstanceId) return;
-
+            const targetInstanceId = targetElement.id; if (targetInstanceId === droppedInstanceId) return;
             const targetType = targetElement.dataset.elementType;
             const newElementId = checkCombination(droppedType, targetType);
 
-            if (newElementId) { // Kombinasi berhasil
-                // Hapus elemen yang di-drop (jika berasal dari workspace) dan target
+            if (newElementId) {
                 const draggedElement = document.getElementById(droppedInstanceId);
-                if (draggedElement) {
-                    workspace.removeChild(draggedElement);
-                    workspaceElements.delete(droppedInstanceId);
-                }
-                workspace.removeChild(targetElement);
-                workspaceElements.delete(targetInstanceId);
+                if (draggedElement) { workspace.removeChild(draggedElement); workspaceElements.delete(droppedInstanceId); }
+                workspace.removeChild(targetElement); workspaceElements.delete(targetInstanceId);
+                createElementInWorkspace(newElementId, targetElement.style.left, targetElement.style.top);
 
-                // Buat elemen hasil kombinasi
-                const resultDiv = createElementInWorkspace(newElementId, targetElement.style.left, targetElement.style.top);
-
-                // Tambahkan ke daftar penemuan jika baru
                 if (!discoveredElements.has(newElementId)) {
                     discoveredElements.add(newElementId);
                     showNotification(newElementId);
+
+                    // PERUBAHAN KUNCI: Logika penambahan petunjuk diperbaiki
+                    if (newElementId === hintedResult) {
+                        // Jika pemain membuat elemen yang disarankan, jangan tambah petunjuk.
+                        // Reset `hintedResult` agar penemuan berikutnya bisa dapat hadiah lagi.
+                        hintedResult = null;
+                    } else {
+                        // Jika pemain menemukan elemen lain (bukan yang disarankan), tambah petunjuk.
+                        hintCount++;
+                        updateHintDisplay();
+                    }
+
                     updateElementPanel();
                     updateCounter();
                     saveProgress();
                 }
             }
-        } else { // Jika drop di area kosong
+        } else {
             const draggedElement = document.getElementById(droppedInstanceId);
-            // Jika elemen berasal dari workspace (dipindahkan, bukan dari panel)
-            if (draggedElement) {
-                const workspaceRect = workspace.getBoundingClientRect();
-                draggedElement.style.left = `${dropX - workspaceRect.left - 40}px`;
-                draggedElement.style.top = `${dropY - workspaceRect.top - 40}px`;
-            } else { // Jika elemen baru dari panel
-                const workspaceRect = workspace.getBoundingClientRect();
-                const left = `${dropX - workspaceRect.left - 40}px`;
-                const top = `${dropY - workspaceRect.top - 40}px`;
-                createElementInWorkspace(droppedType, left, top);
-            }
+            if (draggedElement) { const workspaceRect = workspace.getBoundingClientRect(); draggedElement.style.left = `${dropX - workspaceRect.left - 40}px`; draggedElement.style.top = `${dropY - workspaceRect.top - 40}px`; }
+            else { const workspaceRect = workspace.getBoundingClientRect(); const left = `${dropX - workspaceRect.left - 40}px`; const top = `${dropY - workspaceRect.top - 40}px`; createElementInWorkspace(droppedType, left, top); }
         }
     }
 
@@ -374,10 +383,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- FUNGSI PETUNJUK (HINT) DIPERBARUI ---
+    function getHint() {
+        if (hintCount <= 0) {
+            hintDisplay.innerHTML = `Maaf, petunjuk Anda sudah habis! Temukan elemen baru untuk mendapatkannya lagi.`;
+            hintDisplay.classList.remove('hidden');
+            setTimeout(() => { hintDisplay.classList.add('hidden'); }, 4000);
+            return;
+        }
+
+        const undiscoveredRecipes = [];
+        for (const key in RECIPES) {
+            const result = RECIPES[key];
+            const ingredients = key.split(',');
+            const ingredient1 = ingredients[0];
+            const ingredient2 = ingredients[1];
+            if (discoveredElements.has(ingredient1) && discoveredElements.has(ingredient2) && !discoveredElements.has(result)) {
+                undiscoveredRecipes.push({ ing1: ingredient1, ing2: ingredient2, result: result });
+            }
+        }
+
+        if (undiscoveredRecipes.length > 0) {
+            hintCount--;
+            updateHintDisplay();
+            saveProgress();
+
+            const randomHint = undiscoveredRecipes[Math.floor(Math.random() * undiscoveredRecipes.length)];
+            const el1 = ELEMENTS[randomHint.ing1];
+            const el2 = ELEMENTS[randomHint.ing2];
+
+            // PERUBAHAN KUNCI: Simpan hasil elemen yang disarankan
+            hintedResult = randomHint.result;
+
+            hintDisplay.innerHTML = `Coba gabungkan: <strong>${el1.name} ${el1.emoji}</strong> + <strong>${el2.name} ${el2.emoji}</strong>`;
+            hintDisplay.classList.remove('hidden');
+
+            setTimeout(() => { hintDisplay.classList.add('hidden'); }, 5000);
+        } else {
+            hintDisplay.innerHTML = `Anda hebat! Sepertinya tidak ada lagi kombinasi yang bisa dibuat saat ini.`;
+            hintDisplay.classList.remove('hidden');
+            setTimeout(() => { hintDisplay.classList.add('hidden'); }, 5000);
+        }
+    }
+
+    resetProgressButton.addEventListener('click', () => {
+        if (confirm("Apakah Anda yakin ingin menghapus semua progres? Game akan dimulai dari awal.")) {
+            localStorage.removeItem('discoveredElements');
+            localStorage.removeItem('alkemisInstructionsSeen');
+            localStorage.removeItem('alkemisHintCount');
+            location.reload();
+        }
+    });
+
     // --- EVENT LISTENERS UNTUK TOMBOL ---
     resetButton.addEventListener('click', () => { workspace.innerHTML = '<p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>'; workspaceElements.clear(); });
-    resetProgressButton.addEventListener('click', () => { if (confirm("Apakah Anda yakin ingin menghapus semua progres? Game akan dimulai dari awal.")) { localStorage.removeItem('discoveredElements'); localStorage.removeItem('alkemisInstructionsSeen'); location.reload(); } });
+    // --- EVENT LISTENER TOMBOL RESET DIPERBARUI ---
+    resetProgressButton.addEventListener('click', () => {
+        if (confirm("Apakah Anda yakin ingin menghapus semua progres? Game akan dimulai dari awal.")) {
+            localStorage.removeItem('discoveredElements');
+            localStorage.removeItem('alkemisInstructionsSeen');
+            localStorage.removeItem('alkemisHintCount'); // BARU: Hapus juga data hint
+            location.reload();
+        }
+    });
     showInstructionsButton.addEventListener('click', () => { modalOverlay.classList.remove('hidden'); });
+
+    // BARU: Event listener untuk tombol hint
+    hintButton.addEventListener('click', getHint);
 
     // --- INISIALISASI GAME ---
     handleInstructions();
