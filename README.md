@@ -1,7 +1,7 @@
 # 🧪 Alkemis Elemen
 Selamat datang di Alkemis Elemen! Sebuah game puzzle merge sederhana berbasis web di mana Anda menggabungkan elemen-elemen dasar untuk menemukan ratusan item baru, dari lumpur hingga luar angkasa.
 
-## ✨ [Live Demo Tautan ke Game Anda] (Ganti tautan ini nanti)
+## ✨ [Live Demo Tautan ke Game Anda](https://alkemis-elemen.vercel.app/)
 🎮 Cara Bermain
 1. Misi Anda adalah menemukan semua elemen yang ada.
 2. Mulai dengan Dasar: Anda akan memulai dengan empat elemen fundamental: Api 🔥, Air 💧, Tanah 🟫, dan Udara 💨.
@@ -29,7 +29,7 @@ Untuk menjalankan game ini di mesin lokal Anda, ikuti langkah-langkah berikut:
 
 Clone atau Unduh Repositori
 
-```git clone https://github.com/[NAMA_PENGGUNA_ANDA]/[NAMA_REPOSITORI_ANDA].git```
+```git clone https://github.com/nursyabnii/alkemis-elemen.git```
 Atau unduh file ZIP dan ekstrak.
 
 Buka Folder Proyek
@@ -50,8 +50,8 @@ Cukup buka file index.html langsung di browser web modern pilihan Anda (Chrome, 
 ## 💡 Ide Pengembangan Selanjutnya
 Proyek ini memiliki banyak ruang untuk dikembangkan. Beberapa ide untuk masa depan:
 
-[ ] Menambahkan lebih banyak elemen dan resep.
-[ ] Sistem petunjuk (hint) untuk membantu pemain yang kesulitan.
-[ ] Efek suara untuk kombinasi berhasil dan gagal.
-[ ] Kategori elemen di panel samping (misalnya: Alam, Manusia, Teknologi).
-[ ] Fitur pencarian untuk menemukan elemen yang sudah ditemukan dengan mudah.
+- [ ] Menambahkan lebih banyak elemen dan resep.
+- [ ] Sistem petunjuk (hint) untuk membantu pemain yang kesulitan.
+- [ ] Efek suara untuk kombinasi berhasil dan gagal.
+- [ ] Kategori elemen di panel samping (misalnya: Alam, Manusia, Teknologi).
+- [ ] Fitur pencarian untuk menemukan elemen yang sudah ditemukan dengan mudah.
