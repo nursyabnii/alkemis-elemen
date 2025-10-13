@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchDragState = {
         isDragging: false,
         elementId: null,
+        instanceId: null,
         draggedElement: null,
     };
 
@@ -159,23 +160,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Membuat elemen visual (DOM)
-    function createElementDiv(id, isDraggable = true) {
+    function createElementDiv(id) {
         const elementData = ELEMENTS[id];
         if (!elementData) return null;
 
         const div = document.createElement('div');
-        div.id = id;
         div.className = 'element';
-        div.draggable = isDraggable;
-        div.innerHTML = `
-            <span class="element-emoji">${elementData.emoji}</span>
-            <span class="element-name">${elementData.name}</span>
-        `;
-        div.addEventListener('dragstart', onDragStart);
+        // Simpan tipe elemen di dataset untuk referensi mudah
+        div.dataset.elementType = id;
+        div.draggable = true;
+        div.innerHTML = `<span class="element-emoji">${elementData.emoji}</span><span class="element-name">${elementData.name}</span>`;
 
-        if (isDraggable) {
-            div.addEventListener('touchstart', onTouchStart, { passive: false });
-        }
+        // Tambahkan semua listener
+        div.addEventListener('dragstart', onDragStart);
+        div.addEventListener('touchstart', onTouchStart, { passive: false });
+
         return div;
     }
 
@@ -215,31 +214,35 @@ document.addEventListener('DOMContentLoaded', () => {
         return RECIPES[key1] || RECIPES[key2] || null;
     }
 
-    // --- TAMBAHAN: Fungsi inti untuk melakukan drop, bisa dipakai oleh mouse & touch ---
-    function performDrop(droppedId, targetElement, dropX, dropY) {
+    // --- PERUBAHAN BESAR ---
+    // Fungsi ini sekarang menangani semua logika drop
+    function performDrop(droppedType, droppedInstanceId, targetElement, dropX, dropY) {
         const placeholder = workspace.querySelector('.workspace-placeholder');
         if (placeholder) placeholder.style.display = 'none';
 
-        // Logika kombinasi
+        // Jika target adalah elemen lain di workspace
         if (targetElement && targetElement.classList.contains('element-in-workspace')) {
             const targetInstanceId = targetElement.id;
-            const targetElementId = workspaceElements.get(targetInstanceId);
-            const newElementId = checkCombination(droppedId, targetElementId);
+            // Pastikan tidak drop ke diri sendiri
+            if (targetInstanceId === droppedInstanceId) return;
 
-            if (newElementId) {
-                // Kombinasi berhasil
+            const targetType = targetElement.dataset.elementType;
+            const newElementId = checkCombination(droppedType, targetType);
+
+            if (newElementId) { // Kombinasi berhasil
+                // Hapus elemen yang di-drop (jika berasal dari workspace) dan target
+                const draggedElement = document.getElementById(droppedInstanceId);
+                if (draggedElement) {
+                    workspace.removeChild(draggedElement);
+                    workspaceElements.delete(droppedInstanceId);
+                }
                 workspace.removeChild(targetElement);
                 workspaceElements.delete(targetInstanceId);
 
-                const resultInstanceId = `ws-${uniqueIdCounter++}`;
-                const resultDiv = createElementDiv(newElementId, false);
-                resultDiv.classList.add('element-in-workspace');
-                resultDiv.id = resultInstanceId;
-                resultDiv.style.left = targetElement.style.left;
-                resultDiv.style.top = targetElement.style.top;
-                workspace.appendChild(resultDiv);
-                workspaceElements.set(resultInstanceId, newElementId);
+                // Buat elemen hasil kombinasi
+                const resultDiv = createElementInWorkspace(newElementId, targetElement.style.left, targetElement.style.top);
 
+                // Tambahkan ke daftar penemuan jika baru
                 if (!discoveredElements.has(newElementId)) {
                     discoveredElements.add(newElementId);
                     showNotification(newElementId);
@@ -247,80 +250,87 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateCounter();
                     saveProgress();
                 }
-            } else {
-                // Kombinasi gagal, letakkan elemen baru di samping
-                const newInstanceId = `ws-${uniqueIdCounter++}`;
-                const newElementDiv = createElementDiv(droppedId, false);
-                newElementDiv.classList.add('element-in-workspace');
-                newElementDiv.id = newInstanceId;
-                newElementDiv.style.left = `${parseInt(targetElement.style.left) + 85}px`;
-                newElementDiv.style.top = targetElement.style.top;
-                workspace.appendChild(newElementDiv);
-                workspaceElements.set(newInstanceId, droppedId);
             }
-        } else {
-            // Drop di area kosong
-            const newInstanceId = `ws-${uniqueIdCounter++}`;
-            const newElementDiv = createElementDiv(droppedId, false);
-            newElementDiv.classList.add('element-in-workspace');
-            newElementDiv.id = newInstanceId;
-            const workspaceRect = workspace.getBoundingClientRect();
-            newElementDiv.style.left = `${dropX - workspaceRect.left - 40}px`;
-            newElementDiv.style.top = `${dropY - workspaceRect.top - 40}px`;
-            workspace.appendChild(newElementDiv);
-            workspaceElements.set(newInstanceId, droppedId);
+        } else { // Jika drop di area kosong
+            const draggedElement = document.getElementById(droppedInstanceId);
+            // Jika elemen berasal dari workspace (dipindahkan, bukan dari panel)
+            if (draggedElement) {
+                const workspaceRect = workspace.getBoundingClientRect();
+                draggedElement.style.left = `${dropX - workspaceRect.left - 40}px`;
+                draggedElement.style.top = `${dropY - workspaceRect.top - 40}px`;
+            } else { // Jika elemen baru dari panel
+                const workspaceRect = workspace.getBoundingClientRect();
+                const left = `${dropX - workspaceRect.left - 40}px`;
+                const top = `${dropY - workspaceRect.top - 40}px`;
+                createElementInWorkspace(droppedType, left, top);
+            }
         }
     }
 
+    // --- BARU: Fungsi bantuan untuk membuat elemen di workspace ---
+    function createElementInWorkspace(typeId, left, top) {
+        const instanceId = `ws-${uniqueIdCounter++}`;
+        const elementDiv = createElementDiv(typeId);
+        elementDiv.id = instanceId;
+        elementDiv.classList.add('element-in-workspace');
+        elementDiv.style.left = left;
+        elementDiv.style.top = top;
 
-    // --- LOGIKA DRAG & DROP (DESKTOP MOUSE) ---
-    function onDragStart(event) {
-        event.dataTransfer.setData('text/plain', event.target.id);
-        event.target.classList.add('dragging');
+        workspace.appendChild(elementDiv);
+        workspaceElements.set(instanceId, typeId);
+        return elementDiv;
     }
-    workspace.addEventListener('dragover', (event) => {
-        event.preventDefault();
-    });
-    workspace.addEventListener('drop', (event) => {
-        event.preventDefault();
-        const droppedId = event.dataTransfer.getData('text/plain');
-        const targetElement = event.target.closest('.element-in-workspace');
-        document.querySelector('.dragging')?.classList.remove('dragging');
 
-        // Gunakan fungsi performDrop yang baru
-        performDrop(droppedId, targetElement, event.clientX, event.clientY);
-    });
 
-    // --- TAMBAHAN: LOGIKA DRAG & DROP (MOBILE TOUCH) ---
+    // --- LOGIKA DRAG & DROP (Menangani mouse dan touch) ---
+
+    function onDragStart(event) {
+        const target = event.target.closest('.element');
+        const elementType = target.dataset.elementType;
+        event.dataTransfer.setData('text/plain', elementType);
+        // Jika elemen dari workspace, kirim juga ID uniknya
+        if (target.classList.contains('element-in-workspace')) {
+            event.dataTransfer.setData('instance-id', target.id);
+        }
+        target.classList.add('dragging');
+    }
+
     function onTouchStart(event) {
-        // Mencegah scroll halaman saat drag elemen
         event.preventDefault();
-
         const target = event.target.closest('.element');
         if (!target) return;
 
         touchDragState.isDragging = true;
-        touchDragState.elementId = target.id;
+        touchDragState.elementId = target.dataset.elementType;
+        if (target.classList.contains('element-in-workspace')) {
+            touchDragState.instanceId = target.id;
+        }
 
-        // Buat elemen "hantu" yang mengikuti jari
         const clone = target.cloneNode(true);
         clone.classList.add('touch-drag');
         document.body.appendChild(clone);
         touchDragState.draggedElement = clone;
 
-        // Posisikan elemen hantu di jari
         const touch = event.touches[0];
         clone.style.left = `${touch.clientX - 40}px`;
         clone.style.top = `${touch.clientY - 40}px`;
     }
 
+    workspace.addEventListener('dragover', (event) => event.preventDefault());
+
+    workspace.addEventListener('drop', (event) => {
+        event.preventDefault();
+        const droppedType = event.dataTransfer.getData('text/plain');
+        const droppedInstanceId = event.dataTransfer.getData('instance-id'); // Bisa kosong
+        const targetElement = event.target.closest('.element-in-workspace');
+        document.querySelector('.dragging')?.classList.remove('dragging');
+
+        performDrop(droppedType, droppedInstanceId, targetElement, event.clientX, event.clientY);
+    });
+
     function onTouchMove(event) {
         if (!touchDragState.isDragging) return;
-
-        // Mencegah scroll
         event.preventDefault();
-
-        // Update posisi elemen hantu
         const touch = event.touches[0];
         touchDragState.draggedElement.style.left = `${touch.clientX - 40}px`;
         touchDragState.draggedElement.style.top = `${touch.clientY - 40}px`;
@@ -333,67 +343,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const dropX = touch.clientX;
         const dropY = touch.clientY;
 
-        // Sembunyikan elemen hantu untuk mendeteksi apa yang ada di bawahnya
         touchDragState.draggedElement.style.display = 'none';
         const elementBelow = document.elementFromPoint(dropX, dropY);
-
-        // Hapus elemen hantu
         document.body.removeChild(touchDragState.draggedElement);
 
         const workspaceRect = workspace.getBoundingClientRect();
-
-        // Cek jika drop terjadi di dalam workspace
-        if (dropX > workspaceRect.left && dropX < workspaceRect.right &&
-            dropY > workspaceRect.top && dropY < workspaceRect.bottom) {
+        if (dropX > workspaceRect.left && dropX < workspaceRect.right && dropY > workspaceRect.top && dropY < workspaceRect.bottom) {
             const targetElement = elementBelow ? elementBelow.closest('.element-in-workspace') : null;
-            // Gunakan fungsi performDrop yang sama
-            performDrop(touchDragState.elementId, targetElement, dropX, dropY);
+            performDrop(touchDragState.elementId, touchDragState.instanceId, targetElement, dropX, dropY);
         }
 
         // Reset state
         touchDragState.isDragging = false;
         touchDragState.elementId = null;
+        touchDragState.instanceId = null;
         touchDragState.draggedElement = null;
     }
 
-    // --- Tambahkan listener global untuk touch move dan end ---
     document.addEventListener('touchmove', onTouchMove, { passive: false });
     document.addEventListener('touchend', onTouchEnd);
 
-
-    // --- EVENT LISTENERS UNTUK TOMBOL ---
-    resetButton.addEventListener('click', () => { /* ... (fungsi ini tidak berubah) ... */
-        workspace.innerHTML = '<p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>';
-        workspaceElements.clear();
-    });
-    resetProgressButton.addEventListener('click', () => { /* ... (fungsi ini tidak berubah) ... */
-        if (confirm("Apakah Anda yakin ingin menghapus semua progres? Game akan dimulai dari awal.")) {
-            localStorage.removeItem('discoveredElements');
-            discoveredElements = new Set(['air', 'api', 'tanah', 'udara']);
-            resetButton.click();
-            loadProgress();
-        }
-    });
-
-    // BARU: Fungsi untuk mengelola modal instruksi
+    // Fungsi untuk mengelola modal instruksi
     function handleInstructions() {
-        // Cek apakah instruksi sudah pernah dilihat
         if (localStorage.getItem('alkemisInstructionsSeen') === 'true') {
             modalOverlay.classList.add('hidden');
         }
-
-        // Tambahkan event listener ke tombol tutup
         closeModalButton.addEventListener('click', () => {
             modalOverlay.classList.add('hidden');
-            // Tandai bahwa instruksi sudah dilihat
             localStorage.setItem('alkemisInstructionsSeen', 'true');
         });
     }
 
-    // BARU: Event listener untuk tombol "Cara Bermain"
-    showInstructionsButton.addEventListener('click', () => {
-        modalOverlay.classList.remove('hidden');
-    });
+    // --- EVENT LISTENERS UNTUK TOMBOL ---
+    resetButton.addEventListener('click', () => { workspace.innerHTML = '<p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>'; workspaceElements.clear(); });
+    resetProgressButton.addEventListener('click', () => { if (confirm("Apakah Anda yakin ingin menghapus semua progres? Game akan dimulai dari awal.")) { localStorage.removeItem('discoveredElements'); localStorage.removeItem('alkemisInstructionsSeen'); location.reload(); } });
+    showInstructionsButton.addEventListener('click', () => { modalOverlay.classList.remove('hidden'); });
 
     // --- INISIALISASI GAME ---
     handleInstructions();

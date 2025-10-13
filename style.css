@@ -15,8 +15,6 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    /* PERUBAHAN KUNCI: height diubah menjadi min-height */
-    /* overflow: hidden; <-- PROPERTI INI DIHAPUS */
 }
 
 /* --- Header & Info Bar --- */
@@ -26,20 +24,17 @@ header {
     text-align: center;
     border-bottom: 3px solid #b49b73;
     flex-shrink: 0;
-    /* Mencegah header mengecil */
 }
 
 h1 {
     font-family: 'Cinzel Decorative', cursive;
     font-size: 2rem;
-    /* Ukuran font disesuaikan */
     color: #5c3d2e;
 }
 
 .info-bar {
     display: flex;
     flex-wrap: wrap;
-    /* BARU: Agar tombol pindah baris jika tidak muat */
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -75,10 +70,8 @@ button:hover {
 .game-container {
     display: flex;
     flex-direction: column;
-    /* Default di HP: Vertikal */
     flex-grow: 1;
     padding: 0.5rem;
-    /* Padding lebih kecil */
     gap: 0.5rem;
     overflow: hidden;
 }
@@ -86,7 +79,6 @@ button:hover {
 /* --- Area Kerja (Workspace) --- */
 #workspace {
     flex-grow: 1;
-    /* Ambil sisa ruang vertikal */
     background: url('https://www.transparenttextures.com/patterns/old-wall.png'), #e6d9c1;
     border: 3px dashed #b49b73;
     border-radius: 15px;
@@ -94,7 +86,6 @@ button:hover {
     overflow: hidden;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
     min-height: 250px;
-    /* Tinggi minimal */
 }
 
 .workspace-placeholder {
@@ -111,18 +102,22 @@ button:hover {
 /* --- Panel Elemen --- */
 #element-panel {
     height: 110px;
-    /* Tinggi panel tetap */
     width: 100%;
     flex-shrink: 0;
     background-color: #d8c4a9;
     border-radius: 10px;
     border: 2px solid #b49b73;
-    padding: 5px;
+    padding: 5px 10px;
+    /* Tambah padding horizontal */
     overflow-x: auto;
-    /* Scroll horizontal */
     overflow-y: hidden;
     white-space: nowrap;
-    /* Mencegah elemen turun baris */
+
+    /* ===== PERUBAHAN KUNCI UNTUK SCROLL SNAP ===== */
+    scroll-snap-type: x mandatory;
+    /* Mengaktifkan snap horizontal */
+    scroll-padding: 0 10px;
+    /* Jarak snap dari tepi */
 }
 
 /* --- Gaya untuk Elemen --- */
@@ -140,6 +135,12 @@ button:hover {
     cursor: grab;
     user-select: none;
     transition: transform 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+    /* Mencegah elemen menyusut */
+
+    /* ===== PERUBAHAN KUNCI UNTUK SCROLL SNAP ===== */
+    scroll-snap-align: center;
+    /* Membuat elemen ini menjadi target snap di tengah */
 }
 
 .element:hover {
@@ -152,6 +153,7 @@ button:hover {
     cursor: grabbing;
 }
 
+/* ... (Sisa kode CSS Anda dari .element-emoji sampai akhir tetap sama) ... */
 .element-emoji {
     font-size: 1.8rem;
     pointer-events: none;
@@ -163,13 +165,11 @@ button:hover {
     pointer-events: none;
 }
 
-/* Elemen di dalam workspace */
 .element-in-workspace {
     position: absolute;
     z-index: 10;
 }
 
-/* --- Notifikasi Penemuan Baru --- */
 #notification {
     position: fixed;
     top: 50%;
@@ -185,7 +185,6 @@ button:hover {
     box-shadow: 0 0 20px black;
     transition: opacity 0.3s ease, transform 0.3s ease;
     width: 80%;
-    /* Lebar notifikasi di HP */
 }
 
 #notification.hidden {
@@ -206,19 +205,6 @@ button:hover {
     font-size: 2.5rem;
 }
 
-/* --- Tambahan untuk Touch Drag --- */
-.touch-drag {
-    position: fixed;
-    /* Posisi relatif terhadap viewport */
-    z-index: 1000;
-    pointer-events: none;
-    /* Elemen ini tidak bisa di-klik atau di-target */
-    opacity: 0.7;
-    transform: scale(1.1) rotate(5deg);
-    /* Efek visual saat di-drag */
-}
-
-/* --- Styling untuk Modal Instruksi --- */
 #modal-overlay {
     position: fixed;
     top: 0;
@@ -238,7 +224,6 @@ button:hover {
 #modal-overlay.hidden {
     opacity: 0;
     pointer-events: none;
-    /* Mencegah interaksi saat modal tersembunyi */
 }
 
 #modal-content {
@@ -287,7 +272,6 @@ button:hover {
     background-color: #5c3d2e;
 }
 
-/* --- Media Query untuk layar lebih besar (Desktop) --- */
 @media (min-width: 768px) {
     h1 {
         font-size: 2.5rem;
@@ -295,21 +279,19 @@ button:hover {
 
     .info-bar {
         flex-direction: row;
-        /* Kembali ke tata letak horizontal */
+        flex-wrap: nowrap;
         justify-content: center;
         gap: 20px;
     }
 
     .game-container {
         flex-direction: row;
-        /* Kembali ke tata letak horizontal */
         padding: 1rem;
         gap: 1rem;
     }
 
     #workspace {
         min-height: auto;
-        /* Hapus tinggi minimal */
     }
 
     #element-panel {
@@ -317,17 +299,25 @@ button:hover {
         width: 250px;
         height: auto;
         overflow-y: auto;
-        /* Scroll vertikal lagi */
         overflow-x: hidden;
         white-space: normal;
+        scroll-snap-type: none;
+        /* Nonaktifkan snap di desktop */
     }
 
     .element {
         display: flex;
-        /* Bukan inline-flex */
         float: left;
-        /* Terapkan float lagi untuk desktop */
         width: 80px;
         height: 80px;
+        scroll-snap-align: none;
     }
+}
+
+.touch-drag {
+    position: fixed;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.7;
+    transform: scale(1.1) rotate(5deg);
 }
