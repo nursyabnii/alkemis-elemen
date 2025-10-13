@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alkemis Elemen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>🧪 Alkemis Elemen 🧪</h1>
+        <div class="info-bar">
+            <p>Elemen Ditemukan: <span id="element-count">0</span> / <span id="total-elements">0</span></p>
+            <button id="reset-button">Bersihkan Meja</button>
+            <button id="reset-progress-button" title="Hapus semua progres dan mulai dari awal">Mulai Ulang Game</button>
+        </div>
+    </header>
+
+    <main class="game-container">
+        <div id="workspace">
+            <p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>
+        </div>
+        <div id="element-panel">
+        </div>
+    </main>
+
+    <div id="notification" class="hidden">
+        <p>🎉 Elemen Baru Ditemukan! 🎉</p>
+        <div id="new-element-info"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
