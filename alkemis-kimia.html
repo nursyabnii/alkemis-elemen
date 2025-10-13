@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alkemis Elemen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>🧪 Alkemis Kimia 🧪</h1>
+        <div class="info-bar">
+            <p>Elemen Ditemukan: <span id="element-count">0</span> / <span id="total-elements">0</span></p>
+            <button id="show-instructions-button">Cara Bermain 📜</button>
+            <button id="hint-button">Petunjuk 💡 (<span id="hint-count">3</span>)</button>
+            <button id="reset-button">Bersihkan Meja</button>
+            <button id="reset-progress-button" title="Hapus semua progres dan mulai dari awal">Mulai Ulang Game</button>
+        </div>
+    </header>
+
+    <div id="hint-display" class="hidden"></div>
+    <main class="game-container">
+        <div id="workspace">
+            <p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>
+        </div>
+        <div id="element-panel">
+        </div>
+    </main>
+    <p class="copyright">Copyright &copy;
+        2025 Dibuat oleh Bani Haris ♡
+    </p>
+    </div>
+    <div id="modal-overlay">
+        <div id="modal-content">
+            <h2>📜 Cara Bermain 📜</h2>
+            <p>Selamat datang, Alkemis! Misi Anda adalah menemukan semua elemen yang ada.</p>
+            <ol>
+                <li><strong>Pilih Elemen:</strong> Seret (atau sentuh & geser) sebuah elemen dari panel koleksi ke meja
+                    kerja.</li>
+                <li><strong>Gabungkan:</strong> Timpa elemen di meja kerja dengan elemen lain dari panel koleksi.</li>
+                <li><strong>Temukan:</strong> Jika kombinasi berhasil, elemen baru akan tercipta dan ditambahkan ke
+                    koleksimu!</li>
+            </ol>
+            <p>Teruslah bereksperimen untuk menemukan semua rahasia alam semesta!</p>
+            <button id="close-modal-button">Saya Mengerti, Mulai Bermain!</button>
+        </div>
+    </div>
+
+    <div id="notification" class="hidden">
+        <p>🎉 Elemen Baru Ditemukan! 🎉</p>
+        <div id="new-element-info"></div>
+    </div>
+
+    <script src="alkemis-kimia.js"></script>
+</body>
+
+</html>
