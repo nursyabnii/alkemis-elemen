@@ -1,53 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DATABASE ELEMEN & RESEP (DIPERBANYAK) ---
     const ELEMENTS = {
-        // Unsur Dasar (Blok Pembangun Utama)
-        'hidrogen': { name: 'Hidrogen (H)', emoji: 'H' },
-        'oksigen': { name: 'Oksigen (O)', emoji: 'O' },
-        'karbon': { name: 'Karbon (C)', emoji: 'C' },
-        'nitrogen': { name: 'Nitrogen (N)', emoji: 'N' },
-        'natrium': { name: 'Natrium (Na)', emoji: 'Na' },
-        'klorin': { name: 'Klorin (Cl)', emoji: 'Cl' },
-        'besi': { name: 'Besi (Fe)', emoji: 'Fe' },
-        'silikon': { name: 'Silikon (Si)', emoji: 'Si' },
-        'kalsium': { name: 'Kalsium (Ca)', emoji: 'Ca' },
-        'belerang': { name: 'Belerang (S)', emoji: 'S' },
+        // Unsur Dasar
+        'hidrogen': { name: 'Hidrogen', emoji: 'H' },
+        'oksigen': 'oksigen',
+        'oksigen': { name: 'Oksigen', emoji: 'O' },
+        'karbon': { name: 'Karbon', emoji: 'C' },
+        'nitrogen': { name: 'Nitrogen', emoji: 'N' },
+        'natrium': { name: 'Natrium', emoji: 'Na' },
+        'klorin': { name: 'Klorin', emoji: 'Cl' },
+        'besi': { name: 'Besi', emoji: 'Fe' },
+        'silikon': { name: 'Silikon', emoji: 'Si' },
+        'kalsium': { name: 'Kalsium', emoji: 'Ca' },
+        'belerang': { name: 'Belerang', emoji: 'S' },
 
         // Konsep Energi
-        'energi': { name: 'Energi', emoji: '⚡' },
-        'panas': { name: 'Panas', emoji: '🔥' },
+        'energi': { name: 'Energi', emoji: 'Energi' },
+        'panas': { name: 'Panas', emoji: 'Panas' },
 
-        // Senyawa Anorganik Umum (Tier 1)
-        'air': { name: 'Air (H₂O)', emoji: '💧' },
-        'karbon dioksida': { name: 'CO₂', emoji: '💨' },
-        'garam dapur': { name: 'Garam (NaCl)', emoji: '🧂' },
-        'amonia': { name: 'Amonia (NH₃)', emoji: 'NH₃' },
-        'pasir': { name: 'Silika (SiO₂)', emoji: '⏳' },
-        'karat': { name: 'Karat (Fe₂O₃)', emoji: '🔩' },
-        'kapur tohor': { name: 'Kapur (CaO)', emoji: '🪨' },
-        'sulfur dioksida': { name: 'SO₂', emoji: '🏭' },
+        // Senyawa Anorganik Umum
+        'air': { name: 'Air', emoji: 'H₂O' },
+        'karbon dioksida': { name: 'Karbon Dioksida', emoji: 'CO₂' },
+        'garam dapur': { name: 'Garam Dapur', emoji: 'NaCl' },
+        'amonia': { name: 'Amonia', emoji: 'NH₃' },
+        'pasir': { name: 'Silika', emoji: 'SiO₂' },
+        'karat': { name: 'Karat', emoji: 'Fe₂O₃' },
+        'kapur tohor': { name: 'Kapur Tohor', emoji: 'CaO' },
+        'sulfur dioksida': { name: 'Sulfur Dioksida', emoji: 'SO₂' },
 
-        // Asam & Basa (Tier 2)
-        'asam karbonat': { name: 'Asam Karbonat', emoji: '🥤' },
-        'asam klorida': { name: 'Asam Klorida', emoji: '🧪' },
-        'asam sulfat': { name: 'Asam Sulfat', emoji: '☠️' },
-        'natrium hidroksida': { name: 'Basa Kuat (NaOH)', emoji: '🧼' },
-        'air kapur': { name: 'Air Kapur Ca(OH)₂', emoji: '🥛' },
+        // Asam & Basa
+        'asam karbonat': { name: 'Asam Karbonat', emoji: 'H₂CO₃' },
+        'asam klorida': { name: 'Asam Klorida', emoji: 'HCl' },
+        'asam sulfat': { name: 'Asam Sulfat', emoji: 'H₂SO₄' },
+        'natrium hidroksida': { name: 'Basa Kuat', emoji: 'NaOH' },
+        'air kapur': { name: 'Air Kapur', emoji: 'Ca(OH)₂' },
 
-        // Senyawa Organik & Material (Tier 3)
-        'metana': { name: 'Metana (CH₄)', emoji: '💨' },
-        'etanol': { name: 'Etanol', emoji: '🍷' },
-        'glukosa': { name: 'Glukosa (Gula)', emoji: '🍬' },
-        'asam asetat': { name: 'Cuka (CH₃COOH)', emoji: '🍶' },
-        'kaca': { name: 'Kaca', emoji: '🪟' },
-        'baja': { name: 'Baja', emoji: '⛓️' },
-        'semen': { name: 'Semen', emoji: '🏗️' },
-        'beton': { name: 'Beton', emoji: '🧱' },
+        // Senyawa Organik & Material
+        'metana': { name: 'Metana', emoji: 'CH₄' },
+        'etanol': { name: 'Etanol', emoji: 'C₂H₅OH' },
+        'glukosa': { name: 'Glukosa', emoji: 'C₆H₁₂O₆' },
+        'asam asetat': { name: 'Cuka', emoji: 'CH₃COOH' },
+        'kaca': { name: 'Kaca', emoji: 'Kaca' },
+        'baja': { name: 'Baja', emoji: 'Baja' },
+        'semen': { name: 'Semen', emoji: 'Semen' },
+        'beton': { name: 'Beton', emoji: 'Beton' },
 
-        // Kimia Kehidupan (Tier 4)
-        'asam amino': { name: 'Asam Amino', emoji: '🧬' },
-        'protein': { name: 'Protein', emoji: '🥩' },
-        'kehidupan': { name: 'Kehidupan', emoji: '🌱' },
+        // Kimia Kehidupan
+        'asam amino': { name: 'Asam Amino', emoji: 'Amino' },
+        'protein': { name: 'Protein', emoji: 'Protein' },
+        'kehidupan': { name: 'Kehidupan', emoji: 'HAYAT' },
     };
 
     const RECIPES = {
@@ -65,30 +66,31 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reaksi Pembentukan Asam & Basa
         'air,karbon dioksida': 'asam karbonat',
         'hidrogen,klorin': 'asam klorida',
-        'air,sulfur dioksida': 'asam sulfat', // Disederhanakan
-        'natrium,air': 'natrium hidroksida', // Disederhanakan
+        'air,sulfur dioksida': 'asam sulfat',
+        'natrium,air': 'natrium hidroksida',
         'air,kapur tohor': 'air kapur',
 
-        // Reaksi Netralisasi (Contoh)
-        'asam klorida,natrium hidroksida': 'garam dapur', // Menghasilkan garam lagi
+        // Reaksi Netralisasi
+        'asam klorida,natrium hidroksida': 'garam dapur',
 
         // Reaksi Organik Sederhana
         'hidrogen,karbon': 'metana',
-        'karbon dioksida,air': 'glukosa', // Fotosintesis (disederhanakan)
-        'glukosa,panas': 'etanol', // Fermentasi (disederhanakan)
-        'etanol,oksigen': 'asam asetat', // Oksidasi etanol
+        'karbon dioksida,air': 'glukosa',
+        'glukosa,panas': 'etanol',
+        'etanol,oksigen': 'asam asetat',
 
         // Material & Industri
         'panas,pasir': 'kaca',
         'besi,karbon': 'baja',
-        'kalsium,silikon': 'semen', // Disederhanakan
+        'kalsium,silikon': 'semen',
         'air,semen': 'beton',
 
         // Dasar Kehidupan
-        'karbon,amonia': 'asam amino', // Disederhanakan
+        'karbon,amonia': 'asam amino',
         'asam amino,asam amino': 'protein',
         'protein,energi': 'kehidupan',
     };
+
 
     // --- VARIABEL GLOBAL & DOM ELEMENTS ---
     const workspace = document.getElementById('workspace');
