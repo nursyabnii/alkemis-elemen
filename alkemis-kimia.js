@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fungsi untuk memuat progres dari localStorage
     function loadProgress() {
         const savedData = localStorage.getItem('discoveredElements');
+        // Jika ada data tersimpan, gunakan itu. Jika tidak, mulai dengan set elemen dasar kimia.
         if (savedData) {
             discoveredElements = new Set(JSON.parse(savedData));
         } else {
@@ -119,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
             discoveredElements = new Set(['hidrogen', 'oksigen', 'karbon', 'natrium', 'klorin', 'nitrogen', 'silikon', 'besi']);
         }
 
-        // Muat hint, atau set ke default 3 jika tidak ada
         const savedHints = localStorage.getItem('alkemisHintCount');
         hintCount = savedHints ? parseInt(savedHints, 10) : 3;
         updateHintDisplay();
@@ -206,13 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     discoveredElements.add(newElementId);
                     showNotification(newElementId);
 
-                    // PERUBAHAN KUNCI: Logika penambahan petunjuk diperbaiki
                     if (newElementId === hintedResult) {
-                        // Jika pemain membuat elemen yang disarankan, jangan tambah petunjuk.
-                        // Reset `hintedResult` agar penemuan berikutnya bisa dapat hadiah lagi.
                         hintedResult = null;
                     } else {
-                        // Jika pemain menemukan elemen lain (bukan yang disarankan), tambah petunjuk.
                         hintCount++;
                         updateHintDisplay();
                     }
@@ -365,7 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const el1 = ELEMENTS[randomHint.ing1];
             const el2 = ELEMENTS[randomHint.ing2];
 
-            // PERUBAHAN KUNCI: Simpan hasil elemen yang disarankan
             hintedResult = randomHint.result;
 
             hintDisplay.innerHTML = `Coba gabungkan: <strong>${el1.name} ${el1.emoji}</strong> + <strong>${el2.name} ${el2.emoji}</strong>`;
