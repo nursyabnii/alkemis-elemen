@@ -1,69 +1,93 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- DATABASE ELEMEN & RESEP (DIPERBANYAK) ---
     const ELEMENTS = {
-        // Elemen Dasar (dari Tabel Periodik)
+        // Unsur Dasar (Blok Pembangun Utama)
         'hidrogen': { name: 'Hidrogen (H)', emoji: 'H' },
         'oksigen': { name: 'Oksigen (O)', emoji: 'O' },
         'karbon': { name: 'Karbon (C)', emoji: 'C' },
+        'nitrogen': { name: 'Nitrogen (N)', emoji: 'N' },
         'natrium': { name: 'Natrium (Na)', emoji: 'Na' },
         'klorin': { name: 'Klorin (Cl)', emoji: 'Cl' },
-        'nitrogen': { name: 'Nitrogen (N)', emoji: 'N' },
-        'silikon': { name: 'Silikon (Si)', emoji: 'Si' },
         'besi': { name: 'Besi (Fe)', emoji: 'Fe' },
+        'silikon': { name: 'Silikon (Si)', emoji: 'Si' },
+        'kalsium': { name: 'Kalsium (Ca)', emoji: 'Ca' },
+        'belerang': { name: 'Belerang (S)', emoji: 'S' },
 
-        // Senyawa Sederhana (Tier 1)
+        // Konsep Energi
+        'energi': { name: 'Energi', emoji: '⚡' },
+        'panas': { name: 'Panas', emoji: '🔥' },
+
+        // Senyawa Anorganik Umum (Tier 1)
         'air': { name: 'Air (H₂O)', emoji: '💧' },
         'karbon dioksida': { name: 'CO₂', emoji: '💨' },
-        'metana': { name: 'Metana (CH₄)', emoji: 'CH₄' },
         'garam dapur': { name: 'Garam (NaCl)', emoji: '🧂' },
         'amonia': { name: 'Amonia (NH₃)', emoji: 'NH₃' },
-        'pasir': { name: 'Pasir (SiO₂)', emoji: '⏳' },
+        'pasir': { name: 'Silika (SiO₂)', emoji: '⏳' },
         'karat': { name: 'Karat (Fe₂O₃)', emoji: '🔩' },
+        'kapur tohor': { name: 'Kapur (CaO)', emoji: '🪨' },
+        'sulfur dioksida': { name: 'SO₂', emoji: '🏭' },
 
-        // Konsep & Senyawa Kompleks (Tier 2)
+        // Asam & Basa (Tier 2)
         'asam karbonat': { name: 'Asam Karbonat', emoji: '🥤' },
         'asam klorida': { name: 'Asam Klorida', emoji: '🧪' },
-        'natrium hidroksida': { name: 'Basa Kuat', emoji: '🧼' },
-        'larutan garam': { name: 'Air Garam', emoji: '🌊' },
-        'api': { name: 'Api (Energi)', emoji: '🔥' },
-        'listrik': { name: 'Listrik', emoji: '⚡' },
-        'kehidupan': { name: 'Kehidupan', emoji: '🌱' },
+        'asam sulfat': { name: 'Asam Sulfat', emoji: '☠️' },
+        'natrium hidroksida': { name: 'Basa Kuat (NaOH)', emoji: '🧼' },
+        'air kapur': { name: 'Air Kapur Ca(OH)₂', emoji: '🥛' },
 
-        // Material & Benda (Tier 3)
-        'kaca': { name: 'Kaca', emoji: '🔍' },
+        // Senyawa Organik & Material (Tier 3)
+        'metana': { name: 'Metana (CH₄)', emoji: '💨' },
+        'etanol': { name: 'Etanol', emoji: '🍷' },
+        'glukosa': { name: 'Glukosa (Gula)', emoji: '🍬' },
+        'asam asetat': { name: 'Cuka (CH₃COOH)', emoji: '🍶' },
+        'kaca': { name: 'Kaca', emoji: '🪟' },
         'baja': { name: 'Baja', emoji: '⛓️' },
-        'plastik': { name: 'Plastik', emoji: '♻️' },
-        'pupuk': { name: 'Pupuk', emoji: '💩' },
-        'gula': { name: 'Gula', emoji: '🍬' },
-        'dna': { name: 'DNA', emoji: '🧬' },
+        'semen': { name: 'Semen', emoji: '🏗️' },
+        'beton': { name: 'Beton', emoji: '🧱' },
+
+        // Kimia Kehidupan (Tier 4)
+        'asam amino': { name: 'Asam Amino', emoji: '🧬' },
+        'protein': { name: 'Protein', emoji: '🥩' },
+        'kehidupan': { name: 'Kehidupan', emoji: '🌱' },
     };
 
     const RECIPES = {
-        // Reaksi Pembentukan Senyawa Sederhana
+        // Reaksi Dasar & Energi
+        'energi,energi': 'panas',
         'hidrogen,oksigen': 'air',
         'karbon,oksigen': 'karbon dioksida',
-        'hidrogen,karbon': 'metana',
         'natrium,klorin': 'garam dapur',
         'hidrogen,nitrogen': 'amonia',
         'silikon,oksigen': 'pasir',
         'besi,oksigen': 'karat',
+        'kalsium,oksigen': 'kapur tohor',
+        'belerang,oksigen': 'sulfur dioksida',
 
-        // Reaksi Lanjutan
+        // Reaksi Pembentukan Asam & Basa
         'air,karbon dioksida': 'asam karbonat',
         'hidrogen,klorin': 'asam klorida',
-        'natrium,air': 'natrium hidroksida',
-        'air,garam dapur': 'larutan garam',
-        'metana,oksigen': 'api', // Representasi sederhana pembakaran
-        'besi,karbon': 'baja', // Representasi sederhana pembuatan baja
+        'air,sulfur dioksida': 'asam sulfat', // Disederhanakan
+        'natrium,air': 'natrium hidroksida', // Disederhanakan
+        'air,kapur tohor': 'air kapur',
 
-        // Konsep
-        'api,pasir': 'kaca', // Representasi pemanasan pasir menjadi kaca
-        'karat,air': 'listrik', // Konsep baterai sederhana
-        'karbon,air': 'kehidupan', // Konsep dasar kehidupan berbasis karbon
-        'metana,karbon': 'plastik', // Konsep polimer sederhana
-        'amonia,nitrogen': 'pupuk', // Konsep pupuk nitrogen
-        'karbon dioksida,kehidupan': 'gula', // Konsep fotosintesis sederhana
-        'kehidupan,nitrogen': 'dna', // Konsep dasar DNA
+        // Reaksi Netralisasi (Contoh)
+        'asam klorida,natrium hidroksida': 'garam dapur', // Menghasilkan garam lagi
+
+        // Reaksi Organik Sederhana
+        'hidrogen,karbon': 'metana',
+        'karbon dioksida,air': 'glukosa', // Fotosintesis (disederhanakan)
+        'glukosa,panas': 'etanol', // Fermentasi (disederhanakan)
+        'etanol,oksigen': 'asam asetat', // Oksidasi etanol
+
+        // Material & Industri
+        'panas,pasir': 'kaca',
+        'besi,karbon': 'baja',
+        'kalsium,silikon': 'semen', // Disederhanakan
+        'air,semen': 'beton',
+
+        // Dasar Kehidupan
+        'karbon,amonia': 'asam amino', // Disederhanakan
+        'asam amino,asam amino': 'protein',
+        'protein,energi': 'kehidupan',
     };
 
     // --- VARIABEL GLOBAL & DOM ELEMENTS ---
@@ -84,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hintDisplay = document.getElementById('hint-display');
     const hintCountSpan = document.getElementById('hint-count');
 
-    let discoveredElements = new Set(['hidrogen', 'oksigen', 'karbon', 'natrium', 'klorin', 'nitrogen', 'silikon', 'besi']);
+    let discoveredElements = new Set(['hidrogen', 'oksigen', 'karbon', 'nitrogen', 'natrium', 'klorin', 'besi', 'silikon', 'kalsium', 'belerang', 'energi']);
     let workspaceElements = new Map();
     let uniqueIdCounter = 0;
 
@@ -117,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
             discoveredElements = new Set(JSON.parse(savedData));
         } else {
             // Default elemen awal jika tidak ada data tersimpan
-            discoveredElements = new Set(['hidrogen', 'oksigen', 'karbon', 'natrium', 'klorin', 'nitrogen', 'silikon', 'besi']);
+            discoveredElements = new Set(['hidrogen', 'oksigen', 'karbon', 'nitrogen', 'natrium', 'klorin', 'besi', 'silikon', 'kalsium', 'belerang', 'energi']);
         }
 
         const savedHints = localStorage.getItem('alkemisHintCount');
