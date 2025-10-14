@@ -1,94 +1,99 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DATABASE ELEMEN & RESEP (DIPERBANYAK) ---
+    // --- DATABASE ELEMEN & RESEP (DIPERBARUI) ---
     const ELEMENTS = {
-        // Unsur Dasar (Blok Pembangun Utama)
-        'hidrogen': { name: 'Hidrogen (H)', emoji: 'H' },
-        'oksigen': { name: 'Oksigen (O)', emoji: 'O' },
-        'karbon': { name: 'Karbon (C)', emoji: 'C' },
-        'nitrogen': { name: 'Nitrogen (N)', emoji: 'N' },
-        'natrium': { name: 'Natrium (Na)', emoji: 'Na' },
-        'klorin': { name: 'Klorin (Cl)', emoji: 'Cl' },
-        'besi': { name: 'Besi (Fe)', emoji: 'Fe' },
-        'silikon': { name: 'Silikon (Si)', emoji: 'Si' },
-        'kalsium': { name: 'Kalsium (Ca)', emoji: 'Ca' },
-        'belerang': { name: 'Belerang (S)', emoji: 'S' },
+        // I. Unsur (Zat Murni Tunggal dari Tabel Periodik)
+        // Logam Alkali & Alkali Tanah
+        'natrium': { name: 'Natrium (Na)', emoji: '🧂' },
+        'kalium': { name: 'Kalium (K)', emoji: '🍌' },
+        'kalsium': { name: 'Kalsium (Ca)', emoji: '🦴' },
+        'magnesium': { name: 'Magnesium (Mg)', emoji: '🎇' },
+        // Logam Transisi
+        'besi': { name: 'Besi (Fe)', emoji: '🔩' },
+        'tembaga': { name: 'Tembaga (Cu)', emoji: '🥉' },
+        'seng': { name: 'Seng (Zn)', emoji: '⛓️' },
+        'emas': { name: 'Emas (Au)', emoji: '🥇' },
+        'perak': { name: 'Perak (Ag)', emoji: '🥈' },
+        // Non-Logam & Pembentuk Kehidupan
+        'hidrogen': { name: 'Hidrogen (H)', emoji: '💨' },
+        'karbon': { name: 'Karbon (C)', emoji: '💎' },
+        'nitrogen': { name: 'Nitrogen (N)', emoji: '💨' },
+        'oksigen': { name: 'Oksigen (O)', emoji: '😮' },
+        'fosfor': { name: 'Fosfor (P)', emoji: 'MATCH' },
+        'belerang': { name: 'Belerang (S)', emoji: '🌋' },
+        // Halogen & Gas Mulia
+        'klorin': { name: 'Klorin (Cl)', emoji: '🏊' },
+        'fluorin': { name: 'Fluorin (F)', emoji: '🦷' },
+        'helium': { name: 'Helium (He)', emoji: '🎈' },
+        'neon': { name: 'Neon (Ne)', emoji: '💡' },
+        // Metaloid
+        'silikon': { name: 'Silikon (Si)', emoji: '💻' },
 
-        // Konsep Energi
-        'energi': { name: 'Energi', emoji: '⚡' },
-        'panas': { name: 'Panas', emoji: '🔥' },
-
-        // Senyawa Anorganik Umum (Tier 1)
+        // II. Senyawa (Gabungan Kimia Antar Unsur)
+        // Senyawa Anorganik Sederhana
         'air': { name: 'Air (H₂O)', emoji: '💧' },
-        'karbon dioksida': { name: 'CO₂', emoji: '💨' },
-        'garam dapur': { name: 'Garam (NaCl)', emoji: '🧂' },
-        'amonia': { name: 'Amonia (NH₃)', emoji: 'NH₃' },
-        'pasir': { name: 'Silika (SiO₂)', emoji: '⏳' },
-        'karat': { name: 'Karat (Fe₂O₃)', emoji: '🔩' },
-        'kapur tohor': { name: 'Kapur (CaO)', emoji: '🪨' },
-        'sulfur dioksida': { name: 'SO₂', emoji: '🏭' },
+        'karbon dioksida': { name: 'Karbon Dioksida (CO₂)', emoji: '💨' },
+        'garam dapur': { name: 'Natrium Klorida (NaCl)', emoji: '🧂' },
+        'amonia': { name: 'Amonia (NH₃)', emoji: '👃' },
+        'pasir': { name: 'Silikon Dioksida (SiO₂)', emoji: '⏳' },
+        'karat': { name: 'Oksida Besi (Fe₂O₃)', emoji: '🔩' },
+        // Asam & Basa
+        'asam klorida': { name: 'Asam Klorida (HCl)', emoji: '🧪' },
+        'asam sulfat': { name: 'Asam Sulfat (H₂SO₄)', emoji: '☠️' },
+        'natrium hidroksida': { name: 'Natrium Hidroksida (NaOH)', emoji: '🧼' },
+        // Senyawa Organik (Berbasis Karbon)
+        'metana': { name: 'Metana (CH₄)', emoji: '🔥' },
+        'etanol': { name: 'Etanol (C₂H₅OH)', emoji: '🍷' },
+        'glukosa': { name: 'Glukosa (C₆H₁₂O₆)', emoji: '🍬' },
+        'asam asetat': { name: 'Asam Asetat (CH₃COOH)', emoji: '🍶' },
 
-        // Asam & Basa (Tier 2)
-        'asam karbonat': { name: 'Asam Karbonat', emoji: '🥤' },
-        'asam klorida': { name: 'Asam Klorida', emoji: '🧪' },
-        'asam sulfat': { name: 'Asam Sulfat', emoji: '☠️' },
-        'natrium hidroksida': { name: 'Basa Kuat (NaOH)', emoji: '🧼' },
-        'air kapur': { name: 'Air Kapur Ca(OH)₂', emoji: '🥛' },
-
-        // Senyawa Organik & Material (Tier 3)
-        'metana': { name: 'Metana (CH₄)', emoji: '💨' },
-        'etanol': { name: 'Etanol', emoji: '🍷' },
-        'glukosa': { name: 'Glukosa (Gula)', emoji: '🍬' },
-        'asam asetat': { name: 'Cuka (CH₃COOH)', emoji: '🍶' },
-        'kaca': { name: 'Kaca', emoji: '🪟' },
-        'baja': { name: 'Baja', emoji: '⛓️' },
-        'semen': { name: 'Semen', emoji: '🏗️' },
-        'beton': { name: 'Beton', emoji: '🧱' },
-
-        // Kimia Kehidupan (Tier 4)
-        'asam amino': { name: 'Asam Amino', emoji: '🧬' },
-        'protein': { name: 'Protein', emoji: '🥩' },
-        'kehidupan': { name: 'Kehidupan', emoji: '🌱' },
+        // III. Campuran (Gabungan Fisik)
+        // Campuran Homogen (Larutan)
+        'udara': { name: 'Udara (N₂, O₂, Ar, dll)', emoji: '🌬️' },
+        'air gula': { name: 'Air Gula (C₆H₁₂O₆ + H₂O)', emoji: '🥤' },
+        'air garam': { name: 'Air Garam (NaCl + H₂O)', emoji: '🌊' },
+        'baja': { name: 'Baja (Fe + C)', emoji: '⛓️' },
+        'kuningan': { name: 'Kuningan (Cu + Zn)', emoji: '🎺' },
+        // Campuran Heterogen
+        'pasir dan air': { name: 'Pasir & Air', emoji: '🏖️' },
+        'minyak dan air': { name: 'Minyak & Air', emoji: '🥗' },
+        'beton': { name: 'Beton (Semen, Pasir, Kerikil, Air)', emoji: '🧱' },
+        'susu': { name: 'Susu (Lemak, Protein, Air)', emoji: '🥛' },
     };
 
     const RECIPES = {
-        // Reaksi Dasar & Energi
-        'energi,energi': 'panas',
+        // IV. Resep Pembentukan (Reaksi & Pencampuran)
+
+        // Pembentukan Senyawa Anorganik Dasar
         'hidrogen,oksigen': 'air',
         'karbon,oksigen': 'karbon dioksida',
         'natrium,klorin': 'garam dapur',
-        'hidrogen,nitrogen': 'amonia',
-        'silikon,oksigen': 'pasir',
+        'nitrogen,hidrogen': 'amonia',
         'besi,oksigen': 'karat',
-        'kalsium,oksigen': 'kapur tohor',
-        'belerang,oksigen': 'sulfur dioksida',
+        'silikon,oksigen': 'pasir',
+        'belerang,oksigen': 'sulfur dioksida', // Langkah 1 untuk Asam Sulfat
 
-        // Reaksi Pembentukan Asam & Basa
-        'air,karbon dioksida': 'asam karbonat',
+        // Pembentukan Asam
         'hidrogen,klorin': 'asam klorida',
-        'air,sulfur dioksida': 'asam sulfat', // Disederhanakan
-        'natrium,air': 'natrium hidroksida', // Disederhanakan
-        'air,kapur tohor': 'air kapur',
+        // DIUBAH: Asam Sulfat dibuat dalam 2 langkah
+        'air,sulfur dioksida': 'asam sulfat', // Langkah 2 untuk Asam Sulfat
 
-        // Reaksi Netralisasi (Contoh)
-        'asam klorida,natrium hidroksida': 'garam dapur', // Menghasilkan garam lagi
+        // Pembentukan Basa
+        // DIUBAH: Natrium Hidroksida disederhanakan menjadi 2 elemen
+        'natrium,air': 'natrium hidroksida',
 
-        // Reaksi Organik Sederhana
-        'hidrogen,karbon': 'metana',
-        'karbon dioksida,air': 'glukosa', // Fotosintesis (disederhanakan)
-        'glukosa,panas': 'etanol', // Fermentasi (disederhanakan)
-        'etanol,oksigen': 'asam asetat', // Oksidasi etanol
+        // Pembentukan Senyawa Organik
+        'karbon,hidrogen': 'metana',
+        'air,karbon dioksida': 'glukosa', // Fotosintesis (disederhanakan)
+        'glukosa': 'etanol', // Fermentasi (disederhanakan, gabungkan glukosa dengan dirinya sendiri)
+        'etanol,oksigen': 'asam asetat',
 
-        // Material & Industri
-        'panas,pasir': 'kaca',
+        // Pembentukan Campuran (Larutan & Material)
+        'glukosa,air': 'air gula',
+        'garam dapur,air': 'air garam',
         'besi,karbon': 'baja',
-        'kalsium,silikon': 'semen', // Disederhanakan
-        'air,semen': 'beton',
-
-        // Dasar Kehidupan
-        'karbon,amonia': 'asam amino', // Disederhanakan
-        'asam amino,asam amino': 'protein',
-        'protein,energi': 'kehidupan',
+        'tembaga,seng': 'kuningan',
     };
+
 
     // --- VARIABEL GLOBAL & DOM ELEMENTS ---
     const workspace = document.getElementById('workspace');
@@ -103,20 +108,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalButton = document.getElementById('close-modal-button');
     const showInstructionsButton = document.getElementById('show-instructions-button');
 
-    // BARU: Variabel untuk fitur hint
     const hintButton = document.getElementById('hint-button');
     const hintDisplay = document.getElementById('hint-display');
     const hintCountSpan = document.getElementById('hint-count');
 
-    let discoveredElements = new Set(['hidrogen', 'oksigen', 'karbon', 'nitrogen', 'natrium', 'klorin', 'besi', 'silikon', 'kalsium', 'belerang', 'energi']);
+    // *** DAFTAR ELEMEN AWAL YANG DITEMUKAN (DIPERBARUI) ***
+    let discoveredElements = new Set([
+        'hidrogen', 'oksigen', 'karbon', 'nitrogen', 'natrium', 'klorin',
+        'besi', 'silikon', 'belerang', 'tembaga', 'seng'
+    ]);
     let workspaceElements = new Map();
     let uniqueIdCounter = 0;
 
-    // BARU: Variabel untuk hint counter
     let hintCount = 3;
     let hintedResult = null;
 
-    // --- TAMBAHAN: Variabel untuk state touch drag ---
     let touchDragState = {
         isDragging: false,
         elementId: null,
@@ -126,22 +132,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNGSI-FUNGSI UTAMA ---
 
-
-    // Fungsi untuk menyimpan progres ke localStorage
     function saveProgress() {
         localStorage.setItem('discoveredElements', JSON.stringify(Array.from(discoveredElements)));
-        localStorage.setItem('alkemisHintCount', hintCount); // Simpan hint
+        localStorage.setItem('alkemisHintCount', hintCount);
     }
 
-    // Fungsi untuk memuat progres dari localStorage
     function loadProgress() {
         const savedData = localStorage.getItem('discoveredElements');
-        // Jika ada data tersimpan, gunakan itu. Jika tidak, mulai dengan set elemen dasar kimia.
         if (savedData) {
             discoveredElements = new Set(JSON.parse(savedData));
         } else {
             // Default elemen awal jika tidak ada data tersimpan
-            discoveredElements = new Set(['hidrogen', 'oksigen', 'karbon', 'nitrogen', 'natrium', 'klorin', 'besi', 'silikon', 'kalsium', 'belerang', 'energi']);
+            discoveredElements = new Set([
+                'hidrogen', 'oksigen', 'karbon', 'nitrogen', 'natrium', 'klorin',
+                'besi', 'silikon', 'belerang', 'tembaga', 'seng'
+            ]);
         }
 
         const savedHints = localStorage.getItem('alkemisHintCount');
@@ -156,26 +161,22 @@ document.addEventListener('DOMContentLoaded', () => {
         hintCountSpan.textContent = hintCount;
     }
 
-    // Membuat elemen visual (DOM)
     function createElementDiv(id) {
         const elementData = ELEMENTS[id];
         if (!elementData) return null;
 
         const div = document.createElement('div');
         div.className = 'element';
-        // Simpan tipe elemen di dataset untuk referensi mudah
         div.dataset.elementType = id;
         div.draggable = true;
         div.innerHTML = `<span class="element-emoji">${elementData.emoji}</span><span class="element-name">${elementData.name}</span>`;
 
-        // Tambahkan semua listener
         div.addEventListener('dragstart', onDragStart);
         div.addEventListener('touchstart', onTouchStart, { passive: false });
 
         return div;
     }
 
-    // Memperbarui panel elemen yang ditemukan
     function updateElementPanel() {
         elementPanel.innerHTML = '';
         const sortedElements = Array.from(discoveredElements).sort((a, b) => ELEMENTS[a].name.localeCompare(ELEMENTS[b].name));
@@ -185,13 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Memperbarui penghitung elemen
     function updateCounter() {
         elementCountSpan.textContent = discoveredElements.size;
         totalElementsSpan.textContent = Object.keys(ELEMENTS).length;
     }
 
-    // Menampilkan notifikasi penemuan baru
     function showNotification(newElementId) {
         const elementData = ELEMENTS[newElementId];
         document.getElementById('new-element-info').innerHTML = `
@@ -201,18 +200,22 @@ document.addEventListener('DOMContentLoaded', () => {
         notification.classList.remove('hidden');
         setTimeout(() => {
             notification.classList.add('hidden');
-        }, 2000); // Notifikasi hilang setelah 2 detik
+        }, 2000);
     }
 
-    // Mengecek kombinasi
     function checkCombination(id1, id2) {
+        // Cek resep dengan 1 bahan dulu (misal: glukosa -> etanol)
+        if (id1 === id2) { // Asumsi resep satu bahan dikombinasikan dengan dirinya sendiri
+            const singleKey = id1;
+            if (RECIPES[singleKey]) {
+                return RECIPES[singleKey];
+            }
+        }
         const key1 = `${id1},${id2}`;
         const key2 = `${id2},${id1}`;
         return RECIPES[key1] || RECIPES[key2] || null;
     }
 
-    // --- PERUBAHAN BESAR ---
-    // Fungsi ini sekarang menangani semua logika drop
     function performDrop(droppedType, droppedInstanceId, targetElement, dropX, dropY) {
         const placeholder = workspace.querySelector('.workspace-placeholder'); if (placeholder) placeholder.style.display = 'none';
         if (targetElement && targetElement.classList.contains('element-in-workspace')) {
@@ -249,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- BARU: Fungsi bantuan untuk membuat elemen di workspace ---
     function createElementInWorkspace(typeId, left, top) {
         const instanceId = `ws-${uniqueIdCounter++}`;
         const elementDiv = createElementDiv(typeId);
@@ -263,14 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return elementDiv;
     }
 
-
-    // --- LOGIKA DRAG & DROP (Menangani mouse dan touch) ---
-
     function onDragStart(event) {
         const target = event.target.closest('.element');
         const elementType = target.dataset.elementType;
         event.dataTransfer.setData('text/plain', elementType);
-        // Jika elemen dari workspace, kirim juga ID uniknya
         if (target.classList.contains('element-in-workspace')) {
             event.dataTransfer.setData('instance-id', target.id);
         }
@@ -303,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     workspace.addEventListener('drop', (event) => {
         event.preventDefault();
         const droppedType = event.dataTransfer.getData('text/plain');
-        const droppedInstanceId = event.dataTransfer.getData('instance-id'); // Bisa kosong
+        const droppedInstanceId = event.dataTransfer.getData('instance-id');
         const targetElement = event.target.closest('.element-in-workspace');
         document.querySelector('.dragging')?.classList.remove('dragging');
 
@@ -335,7 +333,6 @@ document.addEventListener('DOMContentLoaded', () => {
             performDrop(touchDragState.elementId, touchDragState.instanceId, targetElement, dropX, dropY);
         }
 
-        // Reset state
         touchDragState.isDragging = false;
         touchDragState.elementId = null;
         touchDragState.instanceId = null;
@@ -345,7 +342,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('touchmove', onTouchMove, { passive: false });
     document.addEventListener('touchend', onTouchEnd);
 
-    // Fungsi untuk mengelola modal instruksi
     function handleInstructions() {
         if (localStorage.getItem('alkemisInstructionsSeen') === 'true') {
             modalOverlay.classList.add('hidden');
@@ -356,10 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- FUNGSI PETUNJUK (HINT) DIPERBARUI ---
     function getHint() {
         if (hintCount <= 0) {
-            hintDisplay.innerHTML = `Maaf, petunjuk Anda sudah habis! Temukan elemen baru untuk mendapatkannya lagi.`;
+            hintDisplay.innerHTML = `Maaf, petunjuk Anda sudah habis!`;
             hintDisplay.classList.remove('hidden');
             setTimeout(() => { hintDisplay.classList.add('hidden'); }, 4000);
             return;
@@ -368,11 +363,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const undiscoveredRecipes = [];
         for (const key in RECIPES) {
             const result = RECIPES[key];
+            if (discoveredElements.has(result)) continue;
+
             const ingredients = key.split(',');
-            const ingredient1 = ingredients[0];
-            const ingredient2 = ingredients[1];
-            if (discoveredElements.has(ingredient1) && discoveredElements.has(ingredient2) && !discoveredElements.has(result)) {
-                undiscoveredRecipes.push({ ing1: ingredient1, ing2: ingredient2, result: result });
+            // Cek apakah semua bahan sudah ditemukan
+            const allIngredientsDiscovered = ingredients.every(ing => discoveredElements.has(ing));
+
+            if (allIngredientsDiscovered) {
+                undiscoveredRecipes.push({ ingredients: ingredients, result: result });
             }
         }
 
@@ -382,12 +380,20 @@ document.addEventListener('DOMContentLoaded', () => {
             saveProgress();
 
             const randomHint = undiscoveredRecipes[Math.floor(Math.random() * undiscoveredRecipes.length)];
-            const el1 = ELEMENTS[randomHint.ing1];
-            const el2 = ELEMENTS[randomHint.ing2];
+            const ing1 = ELEMENTS[randomHint.ingredients[0]];
+
+            let hintText = '';
+            if (randomHint.ingredients.length === 1) {
+                // Untuk resep dengan satu bahan
+                hintText = `Coba gunakan: <strong>${ing1.name} ${ing1.emoji}</strong>... Mungkin dengan sesuatu?`;
+            } else {
+                const ing2 = ELEMENTS[randomHint.ingredients[1]];
+                hintText = `Coba gabungkan: <strong>${ing1.name} ${ing1.emoji}</strong> + <strong>${ing2.name} ${ing2.emoji}</strong>`;
+            }
 
             hintedResult = randomHint.result;
 
-            hintDisplay.innerHTML = `Coba gabungkan: <strong>${el1.name} ${el1.emoji}</strong> + <strong>${el2.name} ${el2.emoji}</strong>`;
+            hintDisplay.innerHTML = hintText;
             hintDisplay.classList.remove('hidden');
 
             setTimeout(() => { hintDisplay.classList.add('hidden'); }, 5000);
@@ -398,20 +404,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- EVENT LISTENERS UNTUK TOMBOL ---
     resetButton.addEventListener('click', () => { workspace.innerHTML = '<p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>'; workspaceElements.clear(); });
-    // --- EVENT LISTENER TOMBOL RESET DIPERBARUI ---
     resetProgressButton.addEventListener('click', () => {
         if (confirm("Apakah Anda yakin ingin menghapus semua progres? Game akan dimulai dari awal.")) {
             localStorage.removeItem('discoveredElements');
             localStorage.removeItem('alkemisInstructionsSeen');
-            localStorage.removeItem('alkemisHintCount'); // BARU: Hapus juga data hint
+            localStorage.removeItem('alkemisHintCount');
             location.reload();
         }
     });
     showInstructionsButton.addEventListener('click', () => { modalOverlay.classList.remove('hidden'); });
 
-    // BARU: Event listener untuk tombol hint
     hintButton.addEventListener('click', getHint);
 
     // --- INISIALISASI GAME ---
