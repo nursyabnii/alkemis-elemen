@@ -13,6 +13,7 @@
         <h1>🧪 Alkemis Kimia 🧪</h1>
         <div class="info-bar">
             <p>Elemen Ditemukan: <span id="element-count">0</span> / <span id="total-elements">0</span></p>
+            <button id="switch-mode-button" class="nav-button">💧 Mode Elemen 🔥</button>
             <button id="show-instructions-button">Cara Bermain 📜</button>
             <button id="hint-button">Petunjuk 💡 (<span id="hint-count">3</span>)</button>
             <button id="reset-button">Bersihkan Meja</button>
@@ -54,6 +55,18 @@
     </div>
 
     <script src="alkemis-kimia.js"></script>
+
+    <script>
+        document.getElementById('switch-mode-button').addEventListener('click', () => {
+            // Hapus data progres dari localStorage
+            localStorage.removeItem('discoveredElements');
+            localStorage.removeItem('alkemisInstructionsSeen');
+            localStorage.removeItem('alkemisHintCount');
+
+            // Pindah ke halaman mode lain
+            window.location.href = 'index.html';
+        });
+    </script>
 </body>
 
 </html>

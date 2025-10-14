@@ -426,15 +426,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    resetProgressButton.addEventListener('click', () => {
-        if (confirm("Apakah Anda yakin ingin menghapus semua progres? Game akan dimulai dari awal.")) {
-            localStorage.removeItem('discoveredElements');
-            localStorage.removeItem('alkemisInstructionsSeen');
-            localStorage.removeItem('alkemisHintCount');
-            location.reload();
-        }
-    });
-
     // --- EVENT LISTENERS UNTUK TOMBOL ---
     resetButton.addEventListener('click', () => { workspace.innerHTML = '<p class="workspace-placeholder">Seret elemen ke sini untuk memulai kombinasi.</p>'; workspaceElements.clear(); });
     // --- EVENT LISTENER TOMBOL RESET DIPERBARUI ---

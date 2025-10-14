@@ -361,3 +361,20 @@ button:hover {
     opacity: 0.7;
     transform: scale(1.1) rotate(5deg);
 }
+
+.nav-button {
+    background-color: #4a4a4a;
+    color: white;
+    border: 1px solid #666;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-family: inherit;
+    /* Pastikan font sama dengan tombol lain */
+    transition: background-color 0.2s;
+}
+
+.nav-button:hover {
+    background-color: #5a5a5a;
+}
